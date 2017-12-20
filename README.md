@@ -10,5 +10,8 @@ and the other in spanish https://github.com/javierarce/palabras/blob/master/list
 You should download python3 in their game page https://www.python.org/download/releases/3.0/
 Imports used in-game are json, csv, random and os
 
+!IMPORTANT you should create an empty folder inside the GuessWord directory, same level as python files called "users"
+
 In the command line go to the game folder and write 'python game_guess_word.py'
+
 
