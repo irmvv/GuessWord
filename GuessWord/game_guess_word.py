@@ -96,10 +96,12 @@ def play():
     guess = " "
     while tries > 0 and check_win(word, guess) == False:
         if language == "english":
-            print("The word you are looking for has", globalLength, "letters. You have", tries, "tries left")
+            print("The word you are looking for has", globalLength, "letters. You have", tries, "tries left. Write 0 to exit.")
         if language == "spanish":
-            print("La palabra que estas buscando tiene", globalLength, "letras. Tienes", tries, "intentos restantes")
+            print("La palabra que estas buscando tiene", globalLength, "letras. Tienes", tries, "intentos restantes. Escribe 0 para salir.")
         guess = input()
+        if guess == "0":
+            menu()
         print()
         isGuessCorrect = is_guess_correct(word, guess)
         if isGuessCorrect == True:
@@ -117,7 +119,7 @@ def play():
             print("You are out of tries, sorry. The word was", word)
         if language == "spanish":
             print("No te quedan intentos, lo siento. La palabra era", word)
-        user_manage.update_user_win(userName)
+        user_manage.update_user_lose(userName)
     print("*"*100, "\n")
     user_manage.read_user_data(userName)
     play_again_menu(globalLength)
@@ -129,11 +131,11 @@ def instructions():
     if language == "english":
         print("You are provide with the number of letters certain word has, example: 6 letters"
         " so you know how long the word is.\nYou have a limited amount of tries"
-        "to guess the correct word\n"
+        " to guess the correct word\n"
         "You make a guess like 'planes' and you receive a puntuation like:\n"
         "'2 correct 1 semi-correct'\nWhere 'semi-correct' means that the letter is in the"
         " word but not in that position\nWhile 'correct' means it is in the correct"
-        "position\n\n")
+        " position\n\n")
     if language == "spanish":
         print("Se te provee con el número de letras de una palabra, por ejemplo: 5 letras"
         " así que sabes la longitud de la palabra.\nTienes un número limitado de intentos"
@@ -166,22 +168,26 @@ def options():
 
 def select_user():
     global userName
-    global Total
-    global Wins
-    global Loses
-
-    list_data = []
     os.system('cls')
     head()
     if language == "english":
         userName = input("Write user name: ")
     if language == "spanish":
         userName = input("Escribe un nombre de usuario: ")
-    list_data.append(user_manage.read_user_data(userName))
+    data_user(userName)
+    menu()
+
+def data_user(user):
+    global Total
+    global Wins
+    global Loses
+    global language
+    list_data = []
+    list_data.append(user_manage.read_user_data(user))
     Total = list_data[0][0]
     Wins = list_data[0][1]
     Loses = list_data[0][2]
-    menu()
+    language = list_data[0][3]
 
 def delete_user():
     os.system('cls')
@@ -202,13 +208,17 @@ def delete_user():
 
 ########################   MENUS  ########################
 def head():
+    global userName
+    if userName != "":
+        data_user(userName)
     if language == "english":
         print("\nWELCOME TO THE WORDS GAME",userName,"\n\nlanguage:English\ttries:"
               ,globalTries,"\tletters:",len(globalWord),"\n"
               "Total games played:",Total,"\t\tWins:",Wins,"\tLoses",Loses,"\n\n")
     if language == "spanish":
         print("\nBIENVENIDO A ADIVINA LA PALABRA",userName,"\n\nidioma:Español\tintentos:"
-              ,globalTries,"\tletras:",len(globalWord),"\n\n")
+              ,globalTries,"\tletras:",len(globalWord),"\n"
+              "Total partidas jugadas:",Total,"\tVictorias:",Wins,"\tDerrotas",Loses,"\n\n")
         print("¡Cuidado, en español 'á' y 'a' son letras distintas! ¡Tenlo en cuenta!\n\n")
 
 def menu():
@@ -292,10 +302,11 @@ def options_menu_1():
     if chosenLanguage == 1:
         language = "english"
         globalWord = finding_the_word.read_from_file_eng(globalLength)
+        user_manage.update_language(userName, "english")
     elif chosenLanguage == 2:
         language = "spanish"
         globalWord = finding_the_word.read_from_file_spa(globalLength)
-
+        user_manage.update_language(userName, "spanish")
 def options_menu_2():
     global globalWord
     global globalTries
